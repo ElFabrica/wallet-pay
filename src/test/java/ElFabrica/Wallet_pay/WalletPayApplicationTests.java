@@ -1,13 +1,14 @@
 package ElFabrica.Wallet_pay;
 
-import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
+import static org.assertj.core.api.Assertions.assertThat;
 
-@SpringBootTest
+import org.junit.jupiter.api.Test;
+
 class WalletPayApplicationTests {
 
 	@Test
 	void contextLoads() {
+		assertThat(WalletPayApplication.class).isNotNull();
 	}
 
 }

@@ -1,0 +1,103 @@
+package ElFabrica.Wallet_pay.common.error;
+
+import ElFabrica.Wallet_pay.auth.application.EmailNotVerifiedException;
+import ElFabrica.Wallet_pay.auth.application.InvalidCredentialsException;
+import ElFabrica.Wallet_pay.auth.application.InvalidRefreshTokenException;
+import ElFabrica.Wallet_pay.user.application.CnpjValidationUnavailableException;
+import ElFabrica.Wallet_pay.user.application.DuplicateUserDataException;
+import ElFabrica.Wallet_pay.user.application.InvalidDocumentException;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
+
+@RestControllerAdvice
+public class GlobalExceptionHandler {
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    ResponseEntity<ApiErrorResponse> handleValidation(MethodArgumentNotValidException exception) {
+        Map<String, String> fields = new LinkedHashMap<>();
+        exception.getBindingResult().getFieldErrors().forEach(error ->
+                fields.putIfAbsent(error.getField(), error.getDefaultMessage())
+        );
+
+        return ResponseEntity
+                .badRequest()
+                .body(new ApiErrorResponse(
+                        HttpStatus.BAD_REQUEST.value(),
+                        "Bad Request",
+                        "Dados invalidos",
+                        fields
+                ));
+    }
+
+    @ExceptionHandler(InvalidDocumentException.class)
+    ResponseEntity<ApiErrorResponse> handleInvalidDocument(InvalidDocumentException exception) {
+        return ResponseEntity
+                .badRequest()
+                .body(new ApiErrorResponse(
+                        HttpStatus.BAD_REQUEST.value(),
+                        "Bad Request",
+                        exception.getMessage(),
+                        Map.of("document", exception.getMessage())
+                ));
+    }
+
+    @ExceptionHandler(DuplicateUserDataException.class)
+    ResponseEntity<ApiErrorResponse> handleDuplicateUserData(DuplicateUserDataException exception) {
+        return ResponseEntity
+                .status(HttpStatus.CONFLICT)
+                .body(new ApiErrorResponse(
+                        HttpStatus.CONFLICT.value(),
+                        "Conflict",
+                        exception.getMessage()
+                ));
+    }
+
+    @ExceptionHandler(InvalidCredentialsException.class)
+    ResponseEntity<ApiErrorResponse> handleInvalidCredentials(InvalidCredentialsException exception) {
+        return ResponseEntity
+                .status(HttpStatus.UNAUTHORIZED)
+                .body(new ApiErrorResponse(
+                        HttpStatus.UNAUTHORIZED.value(),
+                        "Unauthorized",
+                        exception.getMessage()
+                ));
+    }
+
+    @ExceptionHandler(InvalidRefreshTokenException.class)
+    ResponseEntity<ApiErrorResponse> handleInvalidRefreshToken(InvalidRefreshTokenException exception) {
+        return ResponseEntity
+                .status(HttpStatus.UNAUTHORIZED)
+                .body(new ApiErrorResponse(
+                        HttpStatus.UNAUTHORIZED.value(),
+                        "Unauthorized",
+                        exception.getMessage()
+                ));
+    }
+
+    @ExceptionHandler(EmailNotVerifiedException.class)
+    ResponseEntity<ApiErrorResponse> handleEmailNotVerified(EmailNotVerifiedException exception) {
+        return ResponseEntity
+                .status(HttpStatus.FORBIDDEN)
+                .body(new ApiErrorResponse(
+                        HttpStatus.FORBIDDEN.value(),
+                        "Forbidden",
+                        exception.getMessage()
+                ));
+    }
+
+    @ExceptionHandler(CnpjValidationUnavailableException.class)
+    ResponseEntity<ApiErrorResponse> handleCnpjValidationUnavailable(CnpjValidationUnavailableException exception) {
+        return ResponseEntity
+                .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(new ApiErrorResponse(
+                        HttpStatus.INTERNAL_SERVER_ERROR.value(),
+                        "Internal Server Error",
+                        exception.getMessage()
+                ));
+    }
+}
