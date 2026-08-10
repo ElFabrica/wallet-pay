@@ -8,6 +8,7 @@ import ElFabrica.Wallet_pay.user.infra.UserRepository;
 import ElFabrica.Wallet_pay.wallet.domain.WalletEntity;
 import ElFabrica.Wallet_pay.wallet.infra.WalletRepository;
 import java.lang.reflect.Proxy;
+import java.math.BigDecimal;
 import org.junit.jupiter.api.Test;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -38,6 +39,9 @@ class RegisterUserUseCaseTest {
         assertThat(userRepository.savedUser.getPasswordHash()).isEqualTo("hashed-password");
         assertThat(userRepository.savedUser.isEmailVerified()).isFalse();
         assertThat(walletRepository.savedWallet).isNotNull();
+        assertThat(walletRepository.savedWallet.getUser()).isSameAs(userRepository.savedUser);
+        assertThat(walletRepository.savedWallet.getBalance()).isEqualByComparingTo(new BigDecimal("0.00"));
+        assertThat(walletRepository.savedWallet.getCurrency()).isEqualTo("BRL");
     }
 
     @Test

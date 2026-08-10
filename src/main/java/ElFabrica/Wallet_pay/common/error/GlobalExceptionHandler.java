@@ -6,6 +6,7 @@ import ElFabrica.Wallet_pay.auth.application.InvalidRefreshTokenException;
 import ElFabrica.Wallet_pay.user.application.CnpjValidationUnavailableException;
 import ElFabrica.Wallet_pay.user.application.DuplicateUserDataException;
 import ElFabrica.Wallet_pay.user.application.InvalidDocumentException;
+import ElFabrica.Wallet_pay.wallet.application.WalletNotFoundException;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import org.springframework.http.HttpStatus;
@@ -97,6 +98,17 @@ public class GlobalExceptionHandler {
                 .body(new ApiErrorResponse(
                         HttpStatus.INTERNAL_SERVER_ERROR.value(),
                         "Internal Server Error",
+                        exception.getMessage()
+                ));
+    }
+
+    @ExceptionHandler(WalletNotFoundException.class)
+    ResponseEntity<ApiErrorResponse> handleWalletNotFound(WalletNotFoundException exception) {
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(new ApiErrorResponse(
+                        HttpStatus.NOT_FOUND.value(),
+                        "Not Found",
                         exception.getMessage()
                 ));
     }

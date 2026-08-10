@@ -38,7 +38,7 @@ Campos:
 ## Regras de Negocio
 
 - Toda carteira deve pertencer a exatamente um usuario.
-- Todo usuario deve ter exatamente uma carteira no MVP.
+- Todo usuario deve ter exatamente uma carteira no MVP
 - A carteira deve ser criada automaticamente durante o cadastro do usuario.
 - O saldo inicial deve ser `0.00`.
 - A moeda inicial deve ser `BRL`.
