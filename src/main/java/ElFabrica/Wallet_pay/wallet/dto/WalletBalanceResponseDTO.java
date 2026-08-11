@@ -1,9 +1,9 @@
-package ElFabrica.Wallet_pay.wallet.controllers;
+package ElFabrica.Wallet_pay.wallet.dto;
 
 import java.time.Instant;
 import java.util.UUID;
 
-public record WalletBalanceResponse(
+public record WalletBalanceResponseDTO(
         UUID walletId,
         String balance,
         String currency,

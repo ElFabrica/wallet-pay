@@ -1,11 +1,11 @@
-package ElFabrica.Wallet_pay.user.controllers;
+package ElFabrica.Wallet_pay.user.dto;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
-public record CreateUserRequest(
+public record CreateUserRequestDTO(
         @NotBlank(message = "Nome e obrigatorio")
         @Size(min = 3, max = 120, message = "Nome deve ter entre 3 e 120 caracteres")
         String name,

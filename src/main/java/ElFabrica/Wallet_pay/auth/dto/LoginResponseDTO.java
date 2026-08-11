@@ -1,6 +1,6 @@
-package ElFabrica.Wallet_pay.auth.controllers;
+package ElFabrica.Wallet_pay.auth.dto;
 
-public record LoginResponse(
+public record LoginResponseDTO(
         String accessToken,
         String tokenType,
         long expiresIn,

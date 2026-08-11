@@ -1,5 +1,7 @@
 package ElFabrica.Wallet_pay.user.controllers;
 
+import ElFabrica.Wallet_pay.user.dto.CreateUserRequestDTO;
+import ElFabrica.Wallet_pay.user.dto.CreateUserResponseDTO;
 import ElFabrica.Wallet_pay.user.service.RegisterUserCommand;
 import ElFabrica.Wallet_pay.user.service.RegisterUserResult;
 import ElFabrica.Wallet_pay.user.service.RegisterUserUseCase;
@@ -22,7 +24,7 @@ public class UserController {
     }
 
     @PostMapping
-    ResponseEntity<CreateUserResponse> create(@Valid @RequestBody CreateUserRequest request) {
+    ResponseEntity<CreateUserResponseDTO> create(@Valid @RequestBody CreateUserRequestDTO request) {
         RegisterUserResult result = registerUserUseCase.register(new RegisterUserCommand(
                 request.name(),
                 request.email(),
@@ -30,7 +32,7 @@ public class UserController {
                 request.document()
         ));
 
-        CreateUserResponse response = new CreateUserResponse(
+        CreateUserResponseDTO response = new CreateUserResponseDTO(
                 result.id(),
                 result.name(),
                 result.email(),

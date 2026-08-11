@@ -1,5 +1,6 @@
 package ElFabrica.Wallet_pay.wallet.controllers;
 
+import ElFabrica.Wallet_pay.wallet.dto.WalletBalanceResponseDTO;
 import ElFabrica.Wallet_pay.wallet.service.GetWalletBalanceUseCase;
 import ElFabrica.Wallet_pay.wallet.service.WalletBalanceResult;
 import java.util.UUID;
@@ -21,10 +22,10 @@ public class WalletController {
     }
 
     @GetMapping("/me/balance")
-    ResponseEntity<WalletBalanceResponse> getMyBalance(@AuthenticationPrincipal Jwt jwt) {
+    ResponseEntity<WalletBalanceResponseDTO> getMyBalance(@AuthenticationPrincipal Jwt jwt) {
         WalletBalanceResult result = getWalletBalanceUseCase.getBalance(UUID.fromString(jwt.getSubject()));
 
-        return ResponseEntity.ok(new WalletBalanceResponse(
+        return ResponseEntity.ok(new WalletBalanceResponseDTO(
                 result.walletId(),
                 result.balance(),
                 result.currency(),

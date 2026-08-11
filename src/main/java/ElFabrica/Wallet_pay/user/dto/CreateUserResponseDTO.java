@@ -1,9 +1,9 @@
-package ElFabrica.Wallet_pay.user.controllers;
+package ElFabrica.Wallet_pay.user.dto;
 
 import java.time.Instant;
 import java.util.UUID;
 
-public record CreateUserResponse(
+public record CreateUserResponseDTO(
         UUID id,
         String name,
         String email,
