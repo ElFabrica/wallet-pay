@@ -10,9 +10,12 @@ import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
 import java.time.Instant;
 import java.util.UUID;
+
+import lombok.Getter;
 import org.hibernate.annotations.UuidGenerator;
 
 @Entity
+@Getter
 @Table(
         name = "users",
         uniqueConstraints = {
@@ -92,6 +95,10 @@ public class UserEntity {
 
     public boolean isEmailVerified() {
         return emailVerified;
+    }
+
+    public void markEmailVerified() {
+        this.emailVerified = true;
     }
 
     public Instant getCreatedAt() {

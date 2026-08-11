@@ -3,6 +3,7 @@ package ElFabrica.Wallet_pay.auth.web;
 import ElFabrica.Wallet_pay.auth.application.AccessTokenResult;
 import ElFabrica.Wallet_pay.auth.application.AuthService;
 import ElFabrica.Wallet_pay.auth.application.AuthTokenResult;
+import ElFabrica.Wallet_pay.auth.application.EmailVerificationService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -15,9 +16,11 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthController {
 
     private final AuthService authService;
+    private final EmailVerificationService emailVerificationService;
 
-    public AuthController(AuthService authService) {
+    public AuthController(AuthService authService, EmailVerificationService emailVerificationService) {
         this.authService = authService;
+        this.emailVerificationService = emailVerificationService;
     }
 
     @PostMapping("/login")
@@ -44,6 +47,18 @@ public class AuthController {
     @PostMapping("/logout")
     ResponseEntity<Void> logout(@Valid @RequestBody LogoutRequest request) {
         authService.logout(request.refreshToken());
+        return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/email-verification/resend")
+    ResponseEntity<Void> resendEmailVerification(@Valid @RequestBody EmailVerificationResendRequest request) {
+        emailVerificationService.resend(request.email());
+        return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/email-verification/confirm")
+    ResponseEntity<Void> confirmEmailVerification(@Valid @RequestBody EmailVerificationConfirmRequest request) {
+        emailVerificationService.confirm(request.token());
         return ResponseEntity.noContent().build();
     }
 }

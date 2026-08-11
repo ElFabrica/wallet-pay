@@ -1,6 +1,7 @@
 package ElFabrica.Wallet_pay.common.error;
 
 import ElFabrica.Wallet_pay.auth.application.EmailNotVerifiedException;
+import ElFabrica.Wallet_pay.auth.application.EmailVerificationTokenException;
 import ElFabrica.Wallet_pay.auth.application.InvalidCredentialsException;
 import ElFabrica.Wallet_pay.auth.application.InvalidRefreshTokenException;
 import ElFabrica.Wallet_pay.user.application.CnpjValidationUnavailableException;
@@ -87,6 +88,19 @@ public class GlobalExceptionHandler {
                 .body(new ApiErrorResponse(
                         HttpStatus.FORBIDDEN.value(),
                         "Forbidden",
+                        "EMAIL_NOT_VERIFIED",
+                        exception.getMessage()
+                ));
+    }
+
+    @ExceptionHandler(EmailVerificationTokenException.class)
+    ResponseEntity<ApiErrorResponse> handleEmailVerificationToken(EmailVerificationTokenException exception) {
+        return ResponseEntity
+                .badRequest()
+                .body(new ApiErrorResponse(
+                        HttpStatus.BAD_REQUEST.value(),
+                        "Bad Request",
+                        exception.getCode(),
                         exception.getMessage()
                 ));
     }

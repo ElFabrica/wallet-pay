@@ -3,6 +3,7 @@ package ElFabrica.Wallet_pay.user.application;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import ElFabrica.Wallet_pay.auth.application.EmailVerificationTokenIssuer;
 import ElFabrica.Wallet_pay.user.domain.UserEntity;
 import ElFabrica.Wallet_pay.user.infra.UserRepository;
 import ElFabrica.Wallet_pay.wallet.domain.WalletEntity;
@@ -20,11 +21,13 @@ class RegisterUserUseCaseTest {
         FakeWalletRepository walletRepository = new FakeWalletRepository();
         PasswordEncoder passwordEncoder = fixedPasswordEncoder();
         CnpjValidatorGateway cnpjValidatorGateway = cnpj -> false;
+        RecordingEmailVerificationTokenIssuer emailVerificationTokenIssuer = new RecordingEmailVerificationTokenIssuer();
         RegisterUserUseCase useCase = new RegisterUserUseCase(
                 userRepository.proxy(),
                 walletRepository.proxy(),
                 passwordEncoder,
-                cnpjValidatorGateway
+                cnpjValidatorGateway,
+                emailVerificationTokenIssuer
         );
 
         useCase.register(new RegisterUserCommand(
@@ -42,6 +45,7 @@ class RegisterUserUseCaseTest {
         assertThat(walletRepository.savedWallet.getUser()).isSameAs(userRepository.savedUser);
         assertThat(walletRepository.savedWallet.getBalance()).isEqualByComparingTo(new BigDecimal("0.00"));
         assertThat(walletRepository.savedWallet.getCurrency()).isEqualTo("BRL");
+        assertThat(emailVerificationTokenIssuer.user).isSameAs(userRepository.savedUser);
     }
 
     @Test
@@ -53,7 +57,9 @@ class RegisterUserUseCaseTest {
                 userRepository.proxy(),
                 walletRepository.proxy(),
                 fixedPasswordEncoder(),
-                cnpj -> false
+                cnpj -> false,
+                user -> {
+                }
         );
 
         assertThatThrownBy(() -> useCase.register(new RegisterUserCommand(
@@ -76,7 +82,9 @@ class RegisterUserUseCaseTest {
                 userRepository.proxy(),
                 walletRepository.proxy(),
                 fixedPasswordEncoder(),
-                cnpjValidatorGateway
+                cnpjValidatorGateway,
+                user -> {
+                }
         );
 
         assertThatThrownBy(() -> useCase.register(new RegisterUserCommand(
@@ -117,6 +125,16 @@ class RegisterUserUseCaseTest {
         public boolean exists(String cnpj) {
             this.lastCnpj = cnpj;
             return result;
+        }
+    }
+
+    private static final class RecordingEmailVerificationTokenIssuer implements EmailVerificationTokenIssuer {
+
+        private UserEntity user;
+
+        @Override
+        public void issueFor(UserEntity user) {
+            this.user = user;
         }
     }
 

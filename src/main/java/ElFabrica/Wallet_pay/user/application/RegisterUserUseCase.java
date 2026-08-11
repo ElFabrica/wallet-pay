@@ -1,5 +1,6 @@
 package ElFabrica.Wallet_pay.user.application;
 
+import ElFabrica.Wallet_pay.auth.application.EmailVerificationTokenIssuer;
 import ElFabrica.Wallet_pay.user.domain.UserEntity;
 import ElFabrica.Wallet_pay.user.infra.UserRepository;
 import ElFabrica.Wallet_pay.wallet.domain.WalletEntity;
@@ -19,17 +20,20 @@ public class RegisterUserUseCase {
     private final WalletRepository walletRepository;
     private final PasswordEncoder passwordEncoder;
     private final CnpjValidatorGateway cnpjValidatorGateway;
+    private final EmailVerificationTokenIssuer emailVerificationTokenIssuer;
 
     public RegisterUserUseCase(
             UserRepository userRepository,
             WalletRepository walletRepository,
             PasswordEncoder passwordEncoder,
-            CnpjValidatorGateway cnpjValidatorGateway
+            CnpjValidatorGateway cnpjValidatorGateway,
+            EmailVerificationTokenIssuer emailVerificationTokenIssuer
     ) {
         this.userRepository = userRepository;
         this.walletRepository = walletRepository;
         this.passwordEncoder = passwordEncoder;
         this.cnpjValidatorGateway = cnpjValidatorGateway;
+        this.emailVerificationTokenIssuer = emailVerificationTokenIssuer;
     }
 
     @Transactional
@@ -46,6 +50,7 @@ public class RegisterUserUseCase {
         try {
             UserEntity savedUser = userRepository.saveAndFlush(user);
             walletRepository.saveAndFlush(new WalletEntity(savedUser));
+            emailVerificationTokenIssuer.issueFor(savedUser);
 
             return new RegisterUserResult(
                     savedUser.getId(),
