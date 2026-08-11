@@ -1,6 +1,6 @@
 package ElFabrica.Wallet_pay.auth.infra;
 
-import ElFabrica.Wallet_pay.auth.application.EmailVerificationSender;
+import ElFabrica.Wallet_pay.auth.service.EmailVerificationSender;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;

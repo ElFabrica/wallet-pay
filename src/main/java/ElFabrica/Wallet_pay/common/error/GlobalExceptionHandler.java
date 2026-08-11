@@ -1,13 +1,13 @@
 package ElFabrica.Wallet_pay.common.error;
 
-import ElFabrica.Wallet_pay.auth.application.EmailNotVerifiedException;
-import ElFabrica.Wallet_pay.auth.application.EmailVerificationTokenException;
-import ElFabrica.Wallet_pay.auth.application.InvalidCredentialsException;
-import ElFabrica.Wallet_pay.auth.application.InvalidRefreshTokenException;
-import ElFabrica.Wallet_pay.user.application.CnpjValidationUnavailableException;
-import ElFabrica.Wallet_pay.user.application.DuplicateUserDataException;
-import ElFabrica.Wallet_pay.user.application.InvalidDocumentException;
-import ElFabrica.Wallet_pay.wallet.application.WalletNotFoundException;
+import ElFabrica.Wallet_pay.auth.service.EmailNotVerifiedException;
+import ElFabrica.Wallet_pay.auth.service.EmailVerificationTokenException;
+import ElFabrica.Wallet_pay.auth.service.InvalidCredentialsException;
+import ElFabrica.Wallet_pay.auth.service.InvalidRefreshTokenException;
+import ElFabrica.Wallet_pay.user.service.CnpjValidationUnavailableException;
+import ElFabrica.Wallet_pay.user.service.DuplicateUserDataException;
+import ElFabrica.Wallet_pay.user.service.InvalidDocumentException;
+import ElFabrica.Wallet_pay.wallet.service.WalletNotFoundException;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import org.springframework.http.HttpStatus;

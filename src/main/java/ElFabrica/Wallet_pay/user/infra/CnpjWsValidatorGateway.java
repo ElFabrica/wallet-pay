@@ -1,7 +1,7 @@
 package ElFabrica.Wallet_pay.user.infra;
 
-import ElFabrica.Wallet_pay.user.application.CnpjValidationUnavailableException;
-import ElFabrica.Wallet_pay.user.application.CnpjValidatorGateway;
+import ElFabrica.Wallet_pay.user.service.CnpjValidationUnavailableException;
+import ElFabrica.Wallet_pay.user.service.CnpjValidatorGateway;
 import java.net.SocketTimeoutException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;

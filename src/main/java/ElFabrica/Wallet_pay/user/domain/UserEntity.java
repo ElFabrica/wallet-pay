@@ -15,13 +15,14 @@ import lombok.Getter;
 import org.hibernate.annotations.UuidGenerator;
 
 @Entity
-@Getter
+
 @Table(
         name = "users",
         uniqueConstraints = {
                 @UniqueConstraint(name = "uk_users_email", columnNames = "email"),
                 @UniqueConstraint(name = "uk_users_document", columnNames = "document")
         })
+@Getter
 public class UserEntity {
 
     @Id
