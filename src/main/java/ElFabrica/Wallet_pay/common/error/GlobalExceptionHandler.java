@@ -2,8 +2,10 @@ package ElFabrica.Wallet_pay.common.error;
 
 import ElFabrica.Wallet_pay.auth.service.EmailNotVerifiedException;
 import ElFabrica.Wallet_pay.auth.service.EmailVerificationTokenException;
+import ElFabrica.Wallet_pay.auth.service.InvalidPasswordPolicyException;
 import ElFabrica.Wallet_pay.auth.service.InvalidCredentialsException;
 import ElFabrica.Wallet_pay.auth.service.InvalidRefreshTokenException;
+import ElFabrica.Wallet_pay.auth.service.PasswordResetTokenException;
 import ElFabrica.Wallet_pay.user.service.CnpjValidationUnavailableException;
 import ElFabrica.Wallet_pay.user.service.DuplicateUserDataException;
 import ElFabrica.Wallet_pay.user.service.InvalidDocumentException;
@@ -102,6 +104,30 @@ public class GlobalExceptionHandler {
                         "Bad Request",
                         exception.getCode(),
                         exception.getMessage()
+                ));
+    }
+
+    @ExceptionHandler(PasswordResetTokenException.class)
+    ResponseEntity<ApiErrorResponse> handlePasswordResetToken(PasswordResetTokenException exception) {
+        return ResponseEntity
+                .badRequest()
+                .body(new ApiErrorResponse(
+                        HttpStatus.BAD_REQUEST.value(),
+                        "Bad Request",
+                        exception.getCode(),
+                        exception.getMessage()
+                ));
+    }
+
+    @ExceptionHandler(InvalidPasswordPolicyException.class)
+    ResponseEntity<ApiErrorResponse> handleInvalidPasswordPolicy(InvalidPasswordPolicyException exception) {
+        return ResponseEntity
+                .badRequest()
+                .body(new ApiErrorResponse(
+                        HttpStatus.BAD_REQUEST.value(),
+                        "Bad Request",
+                        exception.getMessage(),
+                        Map.of("newPassword", exception.getMessage())
                 ));
     }
 

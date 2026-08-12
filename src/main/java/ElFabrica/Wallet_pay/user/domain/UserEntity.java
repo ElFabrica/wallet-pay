@@ -102,6 +102,10 @@ public class UserEntity {
         this.emailVerified = true;
     }
 
+    public void changePassword(String passwordHash) {
+        this.passwordHash = passwordHash;
+    }
+
     public Instant getCreatedAt() {
         return createdAt;
     }
