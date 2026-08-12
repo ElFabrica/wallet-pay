@@ -1,7 +1,5 @@
 package ElFabrica.Wallet_pay.wallet.controllers;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -18,12 +16,14 @@ import com.nimbusds.jwt.SignedJWT;
 import java.time.Instant;
 import java.util.Date;
 import java.util.UUID;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 @WebMvcTest(WalletController.class)
@@ -36,16 +36,22 @@ class WalletControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
-    @MockitoBean
-    private GetWalletBalanceUseCase getWalletBalanceUseCase;
+    @Autowired
+    private FakeGetWalletBalanceUseCase getWalletBalanceUseCase;
+
+    @BeforeEach
+    void setUp() {
+        getWalletBalanceUseCase.result = null;
+        getWalletBalanceUseCase.exception = null;
+        getWalletBalanceUseCase.userId = null;
+    }
 
     @Test
     void shouldReturnAuthenticatedUserBalance() throws Exception {
         UUID userId = UUID.randomUUID();
         UUID walletId = UUID.randomUUID();
         Instant updatedAt = Instant.parse("2026-08-06T10:30:00Z");
-        when(getWalletBalanceUseCase.getBalance(userId))
-                .thenReturn(new WalletBalanceResult(walletId, "0.00", "BRL", updatedAt));
+        getWalletBalanceUseCase.result = new WalletBalanceResult(walletId, "0.00", "BRL", updatedAt);
 
         mockMvc.perform(get("/wallets/me/balance")
                         .header("Authorization", "Bearer " + token(userId, Instant.now().plusSeconds(60))))
@@ -54,6 +60,8 @@ class WalletControllerTest {
                 .andExpect(jsonPath("$.balance").value("0.00"))
                 .andExpect(jsonPath("$.currency").value("BRL"))
                 .andExpect(jsonPath("$.updatedAt").value("2026-08-06T10:30:00Z"));
+
+        org.assertj.core.api.Assertions.assertThat(getWalletBalanceUseCase.userId).isEqualTo(userId);
     }
 
     @Test
@@ -71,8 +79,8 @@ class WalletControllerTest {
 
     @Test
     void shouldReturnNotFoundWhenAuthenticatedUserHasNoWallet() throws Exception {
-        when(getWalletBalanceUseCase.getBalance(any(UUID.class)))
-                .thenThrow(new WalletNotFoundException("Carteira nao encontrada para o usuario autenticado"));
+        getWalletBalanceUseCase.exception =
+                new WalletNotFoundException("Carteira nao encontrada para o usuario autenticado");
 
         mockMvc.perform(get("/wallets/me/balance")
                         .header("Authorization", "Bearer " + token(UUID.randomUUID(), Instant.now().plusSeconds(60))))
@@ -91,5 +99,34 @@ class WalletControllerTest {
         SignedJWT jwt = new SignedJWT(new JWSHeader(JWSAlgorithm.HS256), claims);
         jwt.sign(new MACSigner(SECRET));
         return jwt.serialize();
+    }
+
+    @TestConfiguration
+    static class TestBeans {
+
+        @Bean
+        FakeGetWalletBalanceUseCase fakeGetWalletBalanceUseCase() {
+            return new FakeGetWalletBalanceUseCase();
+        }
+    }
+
+    static class FakeGetWalletBalanceUseCase extends GetWalletBalanceUseCase {
+
+        private UUID userId;
+        private WalletBalanceResult result;
+        private RuntimeException exception;
+
+        FakeGetWalletBalanceUseCase() {
+            super(null);
+        }
+
+        @Override
+        public WalletBalanceResult getBalance(UUID userId) {
+            this.userId = userId;
+            if (exception != null) {
+                throw exception;
+            }
+            return result;
+        }
     }
 }

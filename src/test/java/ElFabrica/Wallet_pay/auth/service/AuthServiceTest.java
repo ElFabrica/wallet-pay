@@ -117,6 +117,38 @@ class AuthServiceTest {
     }
 
     @Test
+    void shouldRejectMissingRefreshToken() {
+        AuthService authService = new AuthService(
+                new FakeUserRepository(null).proxy(),
+                new FakeRefreshTokenRepository(null).proxy(),
+                matchingPasswordEncoder(),
+                fixedAccessTokenService()
+        );
+
+        assertThatThrownBy(() -> authService.refresh("missing-token"))
+                .isInstanceOf(InvalidRefreshTokenException.class);
+    }
+
+    @Test
+    void shouldRejectInvalidatedRefreshToken() {
+        RefreshTokenEntity refreshToken = new RefreshTokenEntity(
+                "refresh-token",
+                verifiedUser(),
+                Instant.now().plusSeconds(60)
+        );
+        refreshToken.invalidate(Instant.now());
+        AuthService authService = new AuthService(
+                new FakeUserRepository(null).proxy(),
+                new FakeRefreshTokenRepository(refreshToken).proxy(),
+                matchingPasswordEncoder(),
+                fixedAccessTokenService()
+        );
+
+        assertThatThrownBy(() -> authService.refresh("refresh-token"))
+                .isInstanceOf(InvalidRefreshTokenException.class);
+    }
+
+    @Test
     void shouldInvalidateRefreshTokenOnLogout() {
         RefreshTokenEntity refreshToken = new RefreshTokenEntity(
                 "refresh-token",

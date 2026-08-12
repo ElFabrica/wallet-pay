@@ -34,6 +34,20 @@ class EmailVerificationServiceTest {
     }
 
     @Test
+    void shouldNotIssueTokenForAlreadyVerifiedUser() {
+        UserEntity user = unverifiedUser();
+        setField(user, "emailVerified", true);
+        FakeEmailVerificationTokenRepository tokenRepository = new FakeEmailVerificationTokenRepository(null);
+        EmailVerificationService service = service(tokenRepository, new FakeUserRepository(user));
+
+        service.issueFor(user);
+
+        assertThat(tokenRepository.invalidatedUser).isNull();
+        assertThat(tokenRepository.savedToken).isNull();
+        assertThat(tokenRepository.sender.email).isNull();
+    }
+
+    @Test
     void shouldConfirmValidTokenAndVerifyUser() {
         UserEntity user = unverifiedUser();
         EmailVerificationTokenEntity token = new EmailVerificationTokenEntity(
