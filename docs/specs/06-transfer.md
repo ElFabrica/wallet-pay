@@ -79,6 +79,7 @@ Observacao:
 - Se qualquer etapa falhar, nenhum saldo deve ser alterado.
 - O saldo deve ser manipulado com `BigDecimal`.
 - A resposta deve retornar valores monetarios como string.
+- A resposta deve retornar dados atualizados da carteira de origem para exibicao no front.
 
 ## Endpoints
 
@@ -113,6 +114,12 @@ Authorization: Bearer jwt-token
   "currency": "BRL",
   "senderWalletId": "5f12d35f-77c5-4f6f-b1f2-b29eddf96001",
   "receiverWalletId": "f6775f37-c41c-40ff-a862-e21136960001",
+  "senderWallet": {
+    "id": "5f12d35f-77c5-4f6f-b1f2-b29eddf96001",
+    "balance": "74.50",
+    "currency": "BRL",
+    "updatedAt": "2026-08-06T10:30:00Z"
+  },
   "createdAt": "2026-08-06T10:30:00Z",
   "completedAt": "2026-08-06T10:30:00Z"
 }
@@ -163,7 +170,7 @@ Quando:
 9. Creditar valor na carteira de destino.
 10. Criar transacao `TRANSFER` com status `COMPLETED`.
 11. Confirmar alteracoes na mesma transacao.
-12. Retornar dados da transacao.
+12. Retornar dados da transacao com dados atualizados da carteira de origem.
 
 ## Criterios de Aceite
 
@@ -172,6 +179,7 @@ Quando:
 - Deve creditar a carteira de destino.
 - Deve registrar a transacao.
 - Deve retornar valores monetarios como string.
+- Deve retornar saldo, moeda e data de atualizacao da carteira de origem apos a transferencia.
 - Deve rejeitar transferencia sem JWT.
 - Deve rejeitar transferencia com JWT expirado.
 - Deve rejeitar valor menor ou igual a zero.

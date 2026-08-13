@@ -79,6 +79,16 @@ public class WalletEntity {
         return balance;
     }
 
+    public void debit(BigDecimal amount) {
+        this.balance = this.balance.subtract(amount);
+        this.updatedAt = Instant.now();
+    }
+
+    public void credit(BigDecimal amount) {
+        this.balance = this.balance.add(amount);
+        this.updatedAt = Instant.now();
+    }
+
     public String getCurrency() {
         return currency;
     }

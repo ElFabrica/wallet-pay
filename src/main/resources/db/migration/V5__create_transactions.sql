@@ -1,0 +1,20 @@
+CREATE TABLE transactions (
+    id UUID PRIMARY KEY,
+    sender_wallet_id UUID NOT NULL,
+    receiver_wallet_id UUID NOT NULL,
+    type VARCHAR(20) NOT NULL,
+    status VARCHAR(20) NOT NULL,
+    amount NUMERIC(19, 2) NOT NULL,
+    currency VARCHAR(3) NOT NULL,
+    description VARCHAR(255),
+    created_at TIMESTAMPTZ NOT NULL,
+    completed_at TIMESTAMPTZ,
+    failed_at TIMESTAMPTZ,
+    failure_reason VARCHAR(255),
+    CONSTRAINT fk_transactions_sender_wallet FOREIGN KEY (sender_wallet_id) REFERENCES wallets (id) ON DELETE RESTRICT,
+    CONSTRAINT fk_transactions_receiver_wallet FOREIGN KEY (receiver_wallet_id) REFERENCES wallets (id) ON DELETE RESTRICT,
+    CONSTRAINT ck_transactions_type CHECK (type IN ('TRANSFER')),
+    CONSTRAINT ck_transactions_status CHECK (status IN ('COMPLETED', 'FAILED')),
+    CONSTRAINT ck_transactions_amount_positive CHECK (amount > 0),
+    CONSTRAINT ck_transactions_currency_brl CHECK (currency = 'BRL')
+);

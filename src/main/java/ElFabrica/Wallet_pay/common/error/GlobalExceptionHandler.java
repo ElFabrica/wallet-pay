@@ -6,6 +6,8 @@ import ElFabrica.Wallet_pay.auth.service.InvalidPasswordPolicyException;
 import ElFabrica.Wallet_pay.auth.service.InvalidCredentialsException;
 import ElFabrica.Wallet_pay.auth.service.InvalidRefreshTokenException;
 import ElFabrica.Wallet_pay.auth.service.PasswordResetTokenException;
+import ElFabrica.Wallet_pay.transaction.service.InsufficientBalanceException;
+import ElFabrica.Wallet_pay.transaction.service.InvalidTransferException;
 import ElFabrica.Wallet_pay.user.service.CnpjValidationUnavailableException;
 import ElFabrica.Wallet_pay.user.service.DuplicateUserDataException;
 import ElFabrica.Wallet_pay.user.service.InvalidDocumentException;
@@ -138,6 +140,28 @@ public class GlobalExceptionHandler {
                 .body(new ApiErrorResponse(
                         HttpStatus.INTERNAL_SERVER_ERROR.value(),
                         "Internal Server Error",
+                        exception.getMessage()
+                ));
+    }
+
+    @ExceptionHandler(InvalidTransferException.class)
+    ResponseEntity<ApiErrorResponse> handleInvalidTransfer(InvalidTransferException exception) {
+        return ResponseEntity
+                .badRequest()
+                .body(new ApiErrorResponse(
+                        HttpStatus.BAD_REQUEST.value(),
+                        "Bad Request",
+                        exception.getMessage()
+                ));
+    }
+
+    @ExceptionHandler(InsufficientBalanceException.class)
+    ResponseEntity<ApiErrorResponse> handleInsufficientBalance(InsufficientBalanceException exception) {
+        return ResponseEntity
+                .status(HttpStatus.UNPROCESSABLE_ENTITY)
+                .body(new ApiErrorResponse(
+                        HttpStatus.UNPROCESSABLE_ENTITY.value(),
+                        "Unprocessable Entity",
                         exception.getMessage()
                 ));
     }
